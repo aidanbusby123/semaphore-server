@@ -17,9 +17,9 @@ TX_START = bytes.fromhex("66 26 07 01")
 TX_END = bytes.fromhex("31 41 59 26")
 
 db = mysql.connector.connect(
-    host=os.getenv('MYSQL_HOST'),
-    user=os.getenv('MSQL_USER'),
-    password=os.getenv('MYSQL_PWD')
+    host=str(os.getenv('MYSQL_HOST')),
+    user=str(os.getenv('MSQL_USER')),
+    password=str(os.getenv('MYSQL_PWD'))
 )
 
 cur = db.cursor()
