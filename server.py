@@ -59,6 +59,7 @@ class handle_client:
             for i in client_list:
                 if i["addr"] == destination_address:
                     i["socket"].sendall(self.data)
+                    break
             mysql_query = ("INSERT INTO messages(dest_addr, origin_addr, timestamp, sz, content, signature)"
                            "VALUES(%s, %s, %s, %s, %s, %s)")
             cur.execute(mysql_query, (self.addr, contents[1], contents[2], contents[3], contents[4], contents[6]))
