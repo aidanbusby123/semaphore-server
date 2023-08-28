@@ -8,7 +8,7 @@ import bisect
 import funcs
 
 MESSAGE = 0x01
-PUBKEY_REQ = 0x02
+PUBKEY_REQ = 0x02b
 PUBKEY_X = 0x03
 KEY_X = 0x04
 CON = 0x05
@@ -27,7 +27,7 @@ cur = db.cursor()
 client_list = []
 
 server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_address = ('localhost', 8080)
+server_address = (socket.gethostbyname(socket.gethostname()), 8080)
 
 server_sock.bind(server_address)
 
