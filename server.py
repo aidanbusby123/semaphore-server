@@ -43,6 +43,8 @@ class handle_client:
         contents = funcs.parse_message(self.data[1:], CON)
         self.addr = contents[0]
 
+        print(f'{self.addr} connected')
+
         client_list.append({"ip" : self.ip, "addr": self.addr, "socket" : con})
 
         mysql_query = ("SELECT dest_addr, origin_addr, timestamp, sz, content, signature FROM messages WHERE dest_addr = %s AND timestamp > %s")
@@ -63,7 +65,7 @@ class handle_client:
             mysql_query = ("INSERT INTO messages(dest_addr, origin_addr, timestamp, sz, content, signature)"
                            "VALUES(%s, %s, %s, %s, %s, %s)")
             cur.execute(mysql_query, (self.addr, contents[1], contents[2], contents[3], contents[4], contents[6]))
-            print(self.addr, contents[1], contents[2], contents[3], contents[4], contents[6])
+            print((self.addr, contents[1], contents[2], contents[3], contents[4], contents[6]))
 
 
 if __name__ == '__main__':
