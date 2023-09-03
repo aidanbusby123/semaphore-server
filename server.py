@@ -34,6 +34,8 @@ server_sock.bind(server_address)
 
 server_sock.listen(0xffff)
 
+print("Server listening\n")
+
 class handle_client:
     def __init__(self, con=None, ip=None):
         self.con = con
@@ -55,7 +57,7 @@ class handle_client:
             self.con.sendall(self.data)
 
         while True:
-            self.data = con.recv(0xffffffff)
+            self.data = self.con.recv(0xffffffff)
             contents = funcs.parse_message(self.data[1:], MESSAGE)
             destination_address = contents[0]
             for i in client_list:
