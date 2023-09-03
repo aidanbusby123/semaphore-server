@@ -41,11 +41,11 @@ class handle_client:
         self.con = con
         self.ip = ip
 
-        self.data = con.recv(0xffffffff)
+        self.data = self.con.recv(0xffffffff)
         contents = funcs.parse_message(self.data[1:], CON)
         self.addr = contents[0]
 
-        print(f'{self.addr} connected')
+        print(f'{self.addr} connected\n')
 
         client_list.append({"ip" : self.ip, "addr": self.addr, "socket" : con})
 
@@ -73,4 +73,5 @@ class handle_client:
 if __name__ == '__main__':
     while True:
         new_con, new_ip = server_sock.accept()
+        print("New connection\n")
         threading.Thread(target = handle_client, args = (new_con, new_ip))
