@@ -74,4 +74,5 @@ if __name__ == '__main__':
     while True:
         new_con, new_ip = server_sock.accept()
         print("New connection\n")
-        threading.Thread(target = handle_client, args = (new_con, new_ip))
+        thread = threading.Thread(target = handle_client, args = (new_con, new_ip))
+        thread.start()
