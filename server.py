@@ -50,7 +50,7 @@ class handle_client:
         client_list.append({"ip" : self.ip, "addr": self.addr, "socket" : con})
 
         mysql_query = ("SELECT dest_addr, origin_addr, timestamp, sz, content, signature FROM messages WHERE dest_addr = %s AND timestamp > %s")
-        cur.execute(mysql_query, (self.addr, datetime.datetime.fromtimestamp(contents[1], datetime.timezone.utc)))
+        cur.execute(mysql_query, (self.addr, datetime.datetime.fromtimestamp(int.from_bytes(contents[1], 'little'), datetime.timezone.utc)))
 
         for (dest_addr, origin_addr, timestamp, sz, content, signature) in cur:
             self.data = TX_START + bytes.fromhex(dest_addr) + bytes.fromhex(origin_addr) + (datetime.datetime.strptime(timestamp, datetime.timezone.utc)).timestamp() + int(sz).to_bytes(4, 'little') + base64.b64decode(content) + len(base64.b64decode(signature)) + base64.b64decode(signature) + TX_END
