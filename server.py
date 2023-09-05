@@ -41,7 +41,7 @@ class handle_client:
         self.con = con
         self.ip = ip
 
-        self.data = self.con.recv(0xffffffff)
+        self.data = self.con.recv(0xffffff)
         contents = funcs.parse_message(self.data[1:], CON)
         self.addr = contents[0]
 
