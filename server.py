@@ -8,7 +8,7 @@ import bisect
 import funcs
 
 MESSAGE = 0x01
-PUBKEY_REQ = 0x02b
+PUBKEY_REQ = 0x02
 PUBKEY_X = 0x03
 KEY_X = 0x04
 CON = 0x05
