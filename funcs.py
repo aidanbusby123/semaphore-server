@@ -8,7 +8,7 @@ KEY_X = 0x04
 CON = 0x05
 
 def parse_message(buf, type):
-    message_tuple = [None] * 4
+    message_tuple = [None] * 12
     if len(buf) >= 72:
         if type == MESSAGE:
             message_tuple[0] = buf[0:32]
