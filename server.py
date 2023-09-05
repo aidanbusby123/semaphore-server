@@ -57,7 +57,7 @@ class handle_client:
             self.con.sendall(self.data)
 
         while True:
-            self.data = self.con.recv(0xffffffff)
+            self.data = self.con.recv(0xffffff)
             contents = funcs.parse_message(self.data[1:], MESSAGE)
             destination_address = contents[0]
             for i in client_list:
