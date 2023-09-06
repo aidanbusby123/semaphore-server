@@ -20,7 +20,7 @@ db = mysql.connector.connect(
     host=os.getenv('MYSQL_HOST'),
     user=os.getenv('MYSQL_USER'),
     password=os.getenv('MYSQL_PWD'),
-    database='wolfram'
+    database=os.getenv('SEMAPHORE_DB_NAME')
 )
 
 cur = db.cursor()
@@ -34,7 +34,7 @@ server_sock.bind(server_address)
 
 server_sock.listen(0xffff)
 
-print("Server listening\n")
+print("Server listening")
 
 class handle_client:
     def __init__(self, con=None, ip=None):
@@ -45,7 +45,7 @@ class handle_client:
         contents = funcs.parse_message(self.data[1:], CON)
         self.addr = contents[0]
 
-        print(f'{self.addr} connected\n')
+        print(f'{self.addr} connected')
 
         client_list.append({"ip" : self.ip, "addr": self.addr, "socket" : con})
 
@@ -73,6 +73,6 @@ class handle_client:
 if __name__ == '__main__':
     while True:
         new_con, new_ip = server_sock.accept()
-        print("New connection\n")
+        print("New connection")
         thread = threading.Thread(target = handle_client, args = (new_con, new_ip))
         thread.start()
