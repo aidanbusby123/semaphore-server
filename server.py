@@ -46,7 +46,7 @@ class handle_client:
         self.rawdata = self.rawdata.replace(TX_END, b'')
         self.data = base64.b64decode(self.rawdata)
         contents = funcs.parse_message(self.data[1:], CON)
-        self.addr = contents[0]
+        self.addr = contents[0].hex()
 
         print(f'[*] {self.ip} is {self.addr}')
 
@@ -56,7 +56,7 @@ class handle_client:
         cur.execute(mysql_query, (self.addr, datetime.datetime.fromtimestamp(int.from_bytes(contents[1], 'little'), datetime.timezone.utc)))
 
         for (dest_addr, origin_addr, timestamp, sz, content, signature) in cur:
-            self.data = TX_START + bytes.fromhex(dest_addr) + bytes.fromhex(origin_addr) + int((datetime.datetime.strptime(timestamp, datetime.timezone.utc)).timestamp()).to_bytes(4, 'little') + int(sz).to_bytes(4, 'little') + base64.b64decode(content).encode() + len(base64.b64decode(signature)).to_bytes(4, 'little') + base64.b64decode(signature).encode() + TX_END
+            self.data = TX_START + bytes.fromhex(dest_addr) + bytes.fromhex(origin_addr) + int((datetime.datetime.strptime(timestamp, datetime.timezone.utc)).timestamp()).to_bytes(4, 'little') + int(sz).to_bytes(4, 'little') + content + len(base64.b64decode(signature)).to_bytes(4, 'little') + base64.b64decode(signature).encode() + TX_END
             self.con.sendall(self.data)
 
         while True:
@@ -65,15 +65,15 @@ class handle_client:
             self.rawdata = self.rawdata.replace(TX_END, b'')
             self.data = base64.b64decode(self.rawdata)
             contents = funcs.parse_message(self.data[1:], MESSAGE)
-            destination_address = contents[0]
+            destination_address = contents[0].hex()
             for i in client_list:
                 if i["addr"] == destination_address:
                     i["socket"].sendall(self.data)
                     break
             mysql_query = ("INSERT INTO messages(dest_addr, origin_addr, timestamp, sz, content, signature)"
                            "VALUES(%s, %s, %s, %s, %s, %s)")
-            cur.execute(mysql_query, (self.addr, contents[1], contents[2], contents[3], contents[4], contents[6]))
-            print(f'[*]{(self.addr, contents[1], contents[2], contents[3], contents[4], contents[6])}')
+            cur.execute(mysql_query, (destination_address, self.addr, datetime.datetime.fromtimestamp(int.from_bytes(contents[2], 'little')), int.from_bytes(contents[3], 'little'), contents[4], str(base64.b64encode(contents[6]))))
+            print(f'[*]{(destination_address, self.addr, datetime.datetime.fromtimestamp(int.from_bytes(contents[2], "little")), int.from_bytes(contents[3], "little"), contents[4], str(base64.b64encode(contents[6])))}')
 
 
 if __name__ == '__main__':
