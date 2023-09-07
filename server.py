@@ -41,7 +41,8 @@ class handle_client:
         self.con = con
         self.ip = ip
 
-        self.data = self.con.recv(0xffffff)
+        self.rawdata = self.con.recv(0xffffff)
+        self.data = base64.b64decode(self.rawdata)
         contents = funcs.parse_message(self.data[1:], CON)
         self.addr = contents[0]
 
@@ -57,7 +58,8 @@ class handle_client:
             self.con.sendall(self.data)
 
         while True:
-            self.data = self.con.recv(0xffffff)
+            self.rawdata = self.con.recv(0xffffff)
+            self.data = base64.b64decode(self.rawdata)
             contents = funcs.parse_message(self.data[1:], MESSAGE)
             destination_address = contents[0]
             for i in client_list:
