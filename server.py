@@ -42,6 +42,8 @@ class handle_client:
         self.ip = ip
 
         self.rawdata = self.con.recv(0xffffff)
+        self.rawdata = self.rawdata.replace(TX_START, b'')
+        self.rawdata = self.rawdata.replace(TX_END, b'')
         self.data = base64.b64decode(self.rawdata)
         contents = funcs.parse_message(self.data[1:], CON)
         self.addr = contents[0]
@@ -59,6 +61,8 @@ class handle_client:
 
         while True:
             self.rawdata = self.con.recv(0xffffff)
+            self.rawdata = self.rawdata.replace(TX_START, b'')
+            self.rawdata = self.rawdata.replace(TX_END, b'')
             self.data = base64.b64decode(self.rawdata)
             contents = funcs.parse_message(self.data[1:], MESSAGE)
             destination_address = contents[0]
