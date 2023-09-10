@@ -63,6 +63,7 @@ class handle_client:
             self.rawdata = self.con.recv(0xffffff)
             self.rawdata = self.rawdata.replace(TX_START, b'')
             self.rawdata = self.rawdata.replace(TX_END, b'')
+            print(f'[*] {self.addr} sent (encoded)\n {self.rawdata} \n')
             self.data = base64.b64decode(self.rawdata)
             print(f'[*] {self.addr} sent:\n {self.data} \n')
             contents = funcs.parse_message(self.data[1:], MESSAGE)
