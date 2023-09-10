@@ -74,9 +74,6 @@ class handle_client:
             if (message_sz > pow(2, 32)-1):
                 print(f'[*] Error: {self.addr} ({self.ip}) sent incorrectly formatted message: message_sz too large') 
                 continue
-            if (message_sz != len(contents[4])):
-                print(f'[*] Error: {self.addr} ({self.ip}) sent incorrectly formatted message: incorrect message_sz') 
-                continue
             
             for i in client_list:
                 if i["addr"] == destination_address:
