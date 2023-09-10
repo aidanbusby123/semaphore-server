@@ -64,16 +64,23 @@ class handle_client:
             self.rawdata = self.rawdata.replace(TX_START, b'')
             self.rawdata = self.rawdata.replace(TX_END, b'')
             self.data = base64.b64decode(self.rawdata)
+            print(f'[*] {self.addr} sent:\n {self.data} \n')
             contents = funcs.parse_message(self.data[1:], MESSAGE)
             destination_address = contents[0].hex()
+            message_sz = int.from_bytes(contents[3], 'little')
+            if (len(destination_address) != 64) or (message_sz > pow(2, 32)-1) or (message_sz != len(contents[4])):
+                print(f'[*] Error: {self.addr} ({self.ip}) sent incorrectly formatted message') 
+                continue
+
             for i in client_list:
                 if i["addr"] == destination_address:
                     i["socket"].sendall(self.data)
                     break
             mysql_query = ("INSERT INTO messages(dest_addr, origin_addr, timestamp, sz, content, signature)"
                            "VALUES(%s, %s, %s, %s, %s, %s)")
-            cur.execute(mysql_query, (destination_address, self.addr, datetime.datetime.fromtimestamp(int.from_bytes(contents[2], 'little')), int.from_bytes(contents[3], 'little'), contents[4], str(base64.b64encode(contents[6]))))
-            print(f'[*]{(destination_address, self.addr, datetime.datetime.fromtimestamp(int.from_bytes(contents[2], "little")), int.from_bytes(contents[3], "little"), contents[4], str(base64.b64encode(contents[6])))}')
+
+            cur.execute(mysql_query, (destination_address, self.addr, datetime.datetime.fromtimestamp(int.from_bytes(contents[2], 'little')), message_sz, contents[4], str(base64.b64encode(contents[6]))))
+            print(f'[*]{(destination_address, self.addr, datetime.datetime.fromtimestamp(int.from_bytes(contents[2], "little")), message_sz, contents[4], str(base64.b64encode(contents[6])))}')
 
 
 if __name__ == '__main__':
