@@ -15,7 +15,7 @@ def parse_message(buf, type):
             message_tuple[1] = buf[32:64]
             message_tuple[2] = buf[64:68]
             message_tuple[3] = buf[68:72]
-            content_len = int.from_bytes(message_tuple[2], 'little')
+            content_len = int.from_bytes(message_tuple[3], 'little')
             message_tuple[4] = buf[72:72+content_len]
             message_tuple[5] = buf[72+content_len:76+content_len]
             signature_len = int.from_bytes(message_tuple[5], 'little')
