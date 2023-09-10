@@ -68,10 +68,16 @@ class handle_client:
             contents = funcs.parse_message(self.data[1:], MESSAGE)
             destination_address = contents[0].hex()
             message_sz = int.from_bytes(contents[3], 'little')
-            if (len(destination_address) != 64) or (message_sz > pow(2, 32)-1) or (message_sz != len(contents[4])):
-                print(f'[*] Error: {self.addr} ({self.ip}) sent incorrectly formatted message') 
+            if (len(destination_address) != 64): 
+                print(f'[*] Error: {self.addr} ({self.ip}) sent incorrectly formatted message: destination_address incorrect length') 
                 continue
-
+            if (message_sz > pow(2, 32)-1):
+                print(f'[*] Error: {self.addr} ({self.ip}) sent incorrectly formatted message: message_sz too large') 
+                continue
+            if (message_sz != len(contents[4])):
+                print(f'[*] Error: {self.addr} ({self.ip}) sent incorrectly formatted message: incorrect message_sz') 
+                continue
+            
             for i in client_list:
                 if i["addr"] == destination_address:
                     i["socket"].sendall(self.data)
