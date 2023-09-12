@@ -23,7 +23,7 @@ db = mysql.connector.connect(
     database=os.getenv('SEMAPHORE_DB_NAME')
 )
 
-cur = db.cursor()
+cur = db.cursor(buffered=True)
 
 client_list = []
 
@@ -63,7 +63,7 @@ class handle_client:
             self.rawdata = self.con.recv(0xffffff)
             self.rawdata = self.rawdata.replace(TX_START, b'')
             self.rawdata = self.rawdata.replace(TX_END, b'')
-            print(f'[*] {self.addr} sent (encoded)\n {self.rawdata} \n')
+            print(f'[*] {self.addr} sent (encoded)\n {self.rawdata} \n ')
             self.data = base64.b64decode(self.rawdata)
             print(f'[*] {self.addr} sent:\n {self.data} \n')
             contents = funcs.parse_message(self.data[1:], MESSAGE)
@@ -84,6 +84,7 @@ class handle_client:
                            "VALUES(%s, %s, %s, %s, %s, %s)")
 
             cur.execute(mysql_query, (destination_address, self.addr, datetime.datetime.fromtimestamp(int.from_bytes(contents[2], 'little')), message_sz, contents[4], str(base64.b64encode(contents[6]))))
+            db.commit()
             print(f'[*]{(destination_address, self.addr, datetime.datetime.fromtimestamp(int.from_bytes(contents[2], "little")), message_sz, contents[4], str(base64.b64encode(contents[6])))}')
 
 
