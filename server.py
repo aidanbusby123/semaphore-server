@@ -42,9 +42,9 @@ class handle_client:
         self.ip = ip
 
         self.rawdata = self.con.recv(0xffffff)
-        self.rawdata = self.rawdata.replace(TX_START, b'')
-        self.rawdata = self.rawdata.replace(TX_END, b'')
-        self.data = base64.b64decode(self.rawdata)
+        self.encodedata = self.rawdata.replace(TX_START, b'')
+        self.encodedata = self.encodedata.replace(TX_END, b'')
+        self.data = base64.b64decode(self.encodedata)
         contents = funcs.parse_message(self.data[1:], CON)
         self.addr = contents[0].hex()
 
@@ -56,15 +56,15 @@ class handle_client:
         cur.execute(mysql_query, (self.addr, datetime.datetime.fromtimestamp(int.from_bytes(contents[1], 'little'), datetime.timezone.utc)))
 
         for (dest_addr, origin_addr, timestamp, sz, content, signature) in cur:
-            self.data = TX_START + bytes.fromhex(dest_addr) + bytes.fromhex(origin_addr) + int((datetime.datetime.strptime(timestamp, datetime.timezone.utc)).timestamp()).to_bytes(4, 'little') + int(sz).to_bytes(4, 'little') + content + len(base64.b64decode(signature)).to_bytes(4, 'little') + base64.b64decode(signature).encode() + TX_END
-            self.con.sendall(self.data)
+            self.rawdata = TX_START + bytes.fromhex(dest_addr) + bytes.fromhex(origin_addr) + int((datetime.datetime.strptime(timestamp, datetime.timezone.utc)).timestamp()).to_bytes(4, 'little') + int(sz).to_bytes(4, 'little') + content + len(base64.b64decode(signature)).to_bytes(4, 'little') + base64.b64decode(signature).encode() + TX_END
+            self.con.sendall(self.rawdata)
 
         while True:
             self.rawdata = self.con.recv(0xffffff)
-            self.rawdata = self.rawdata.replace(TX_START, b'')
-            self.rawdata = self.rawdata.replace(TX_END, b'')
-            print(f'[*] {self.addr} sent (encoded)\n {self.rawdata} \n ')
-            self.data = base64.b64decode(self.rawdata)
+            self.encodedata = self.rawdata.replace(TX_START, b'')
+            self.encodedata = self.encodedata.replace(TX_END, b'')
+            print(f'[*] {self.addr} sent (encoded)\n {self.encodedata} \n ')
+            self.data = base64.b64decode(self.encodedata)
             print(f'[*] {self.addr} sent:\n {self.data} \n')
             contents = funcs.parse_message(self.data[1:], MESSAGE)
             destination_address = contents[0].hex()
@@ -79,7 +79,7 @@ class handle_client:
             for i in client_list:
                 if i["addr"] == destination_address:
                     print(f'[*] Sending message to {i["addr"]} from {self.addr}')
-                    i["socket"].sendall(self.data)
+                    i["socket"].sendall(self.rawdata)
                     break
             mysql_query = ("INSERT INTO messages(dest_addr, origin_addr, timestamp, sz, content, signature)"
                            "VALUES(%s, %s, %s, %s, %s, %s)")
