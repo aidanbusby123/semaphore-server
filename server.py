@@ -61,6 +61,7 @@ class handle_client:
 
         while True:
             self.rawdata = self.con.recv(0xffffff)
+            if not self.rawdata : break
             self.encodedata = self.rawdata.replace(TX_START, b'')
             self.encodedata = self.encodedata.replace(TX_END, b'')
             print(f'[*] {self.addr} sent (encoded)\n {self.encodedata} \n ')
@@ -88,6 +89,8 @@ class handle_client:
             db.commit()
             print(f'[*]{(destination_address, self.addr, datetime.datetime.fromtimestamp(int.from_bytes(contents[2], "little")), message_sz, contents[4], str(base64.b64encode(contents[6])))}')
 
+        i["addr"] = 0
+        i["socket"] = 0
 
 if __name__ == '__main__':
     while True:
