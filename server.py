@@ -91,6 +91,7 @@ class handle_client:
 
         i["addr"] = 0
         i["socket"] = 0
+        i["ip"] = 0
 
 if __name__ == '__main__':
     while True:
