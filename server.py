@@ -28,7 +28,7 @@ cur = db.cursor(buffered=True)'''
 client_list = []
 
 server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_address = (socket.gethostbyname(socket.gethostname()), 6626)
+server_address = ((socket.gethostname(), 6626))
 
 server_sock.bind(server_address)
 
