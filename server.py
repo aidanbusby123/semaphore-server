@@ -1,6 +1,6 @@
 import socket
 import threading
-import mysql.connector
+#import mysql.connector
 import datetime
 import base64
 import os
@@ -16,14 +16,14 @@ CON = 0x05
 TX_START = bytes.fromhex("66 26 07 01")
 TX_END = bytes.fromhex("31 41 59 26")
 
-db = mysql.connector.connect(
+'''db = mysql.connector.connect(
     host=os.getenv('MYSQL_HOST'),
     user=os.getenv('MYSQL_USER'),
     password=os.getenv('MYSQL_PWD'),
     database=os.getenv('SEMAPHORE_DB_NAME')
 )
 
-cur = db.cursor(buffered=True)
+cur = db.cursor(buffered=True)'''
 
 client_list = []
 
@@ -38,6 +38,7 @@ print("****SEMAPHORE SERVER****")
 
 class handle_client:
     def __init__(self, con=None, ip=None):
+        print("New client\n")
         self.con = con
         self.ip = ip
 
@@ -52,12 +53,12 @@ class handle_client:
 
         client_list.append({"ip" : self.ip, "addr": self.addr, "socket" : con})
 
-        mysql_query = ("SELECT dest_addr, origin_addr, timestamp, sz, content, signature FROM messages WHERE dest_addr = %s AND timestamp > %s")
+        '''mysql_query = ("SELECT dest_addr, origin_addr, timestamp, sz, content, signature FROM messages WHERE dest_addr = %s AND timestamp > %s")
         cur.execute(mysql_query, (self.addr, datetime.datetime.fromtimestamp(int.from_bytes(contents[1], 'little'), datetime.timezone.utc)))
 
         for (dest_addr, origin_addr, timestamp, sz, content, signature) in cur:
             self.rawdata = TX_START + bytes.fromhex(dest_addr) + bytes.fromhex(origin_addr) + int((datetime.datetime.strptime(timestamp, datetime.timezone.utc)).timestamp()).to_bytes(4, 'little') + int(sz).to_bytes(4, 'little') + content + len(base64.b64decode(signature)).to_bytes(4, 'little') + base64.b64decode(signature).encode() + TX_END
-            self.con.sendall(self.rawdata)
+            self.con.sendall(self.rawdata)'''
 
         while True:
             self.rawdata = self.con.recv(0xffffff)
@@ -82,11 +83,11 @@ class handle_client:
                     print(f'[*] Sending message to {i["addr"]} from {self.addr}')
                     i["socket"].sendall(self.rawdata)
                     break
-            mysql_query = ("INSERT INTO messages(dest_addr, origin_addr, timestamp, sz, content, signature)"
-                           "VALUES(%s, %s, %s, %s, %s, %s)")
+            #mysql_query = ("INSERT INTO messages(dest_addr, origin_addr, timestamp, sz, content, signature)"
+                          # "VALUES(%s, %s, %s, %s, %s, %s)")
 
-            cur.execute(mysql_query, (destination_address, self.addr, datetime.datetime.fromtimestamp(int.from_bytes(contents[2], 'little')), message_sz, contents[4], str(base64.b64encode(contents[6]))))
-            db.commit()
+           # cur.execute(mysql_query, (destination_address, self.addr, datetime.datetime.fromtimestamp(int.from_bytes(contents[2], 'little')), message_sz, contents[4], str(base64.b64encode(contents[6]))))
+            #db.commit()
             print(f'[*]{(destination_address, self.addr, datetime.datetime.fromtimestamp(int.from_bytes(contents[2], "little")), message_sz, contents[4], str(base64.b64encode(contents[6])))}')
 
         i["addr"] = 0
