@@ -95,6 +95,7 @@ class handle_client:
         i["ip"] = 0
 
 if __name__ == '__main__':
+    print("in main")
     while True:
         new_con, new_ip = server_sock.accept()
         print(f'[*] {new_ip} connected')
