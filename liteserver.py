@@ -34,7 +34,8 @@ def init_db():
 	        `origin_addr` CHAR(32),
 	        `timestamp` INT(20),
 	        `sz` INT(20),
-	        `content` LONGBLOB(32)
+	        `content` LONGBLOB(32),
+            `signature` BLOB
         );
     """)
     db.commit()
