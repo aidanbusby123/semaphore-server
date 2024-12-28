@@ -100,6 +100,7 @@ class handle_client:
             cur.execute(mysql_query, (destination_address, self.addr, datetime.datetime.fromtimestamp(int.from_bytes(contents[2], 'little')), message_sz, contents[4], str(base64.b64encode(contents[6]))))
             db.commit()
 if __name__ == '__main__':
+    init_db()
     while True:
         new_con, new_ip = server_sock.accept()
         print(f'[*] {new_ip} connected')
