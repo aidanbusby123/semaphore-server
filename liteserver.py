@@ -62,7 +62,7 @@ class handle_client:
         print(f'[*] {self.ip} is {self.addr}')
 
         client_list.append({"ip" : self.ip, "addr": self.addr, "socket" : con})
-        mysql_query = ("SELECT dest_addr, origin_addr, timestamp, sz, content, signature FROM messages WHERE dest_addr = %s AND timestamp > %s")
+        mysql_query = ("SELECT dest_addr, origin_addr, timestamp, sz, content, signature FROM messages WHERE dest_addr = ? AND timestamp > ?")
         cur.execute(mysql_query, (self.addr, datetime.datetime.fromtimestamp(int.from_bytes(contents[1], 'little'), datetime.timezone.utc)))
 
         for (dest_addr, origin_addr, timestamp, sz, content, signature) in cur: # send undelivered messages to client
@@ -94,7 +94,7 @@ class handle_client:
                     print(f'[*] Sending message to {i["addr"]} from {self.addr}')
                     i["socket"].sendall(self.rawdata)
                     break
-            mysql_query = ("INSERT INTO messages(dest_addr, origin_addr, timestamp, sz, content, signature) VALUES(%s, %s, %s, %s, %s, %s)")
+            mysql_query = ("INSERT INTO messages(dest_addr, origin_addr, timestamp, sz, content, signature) VALUES(?, ?, ?, ?, ?, ?)")
             cur.execute(mysql_query, (self.addr, destination_address, timestamp))
 
             cur.execute(mysql_query, (destination_address, self.addr, datetime.datetime.fromtimestamp(int.from_bytes(contents[2], 'little')), message_sz, contents[4], str(base64.b64encode(contents[6]))))
