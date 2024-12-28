@@ -48,7 +48,7 @@ class handle_client:
         self.ip = ip
         
         db = sqlite3.connect("messages.db", check_same_thread=False) # create connection for sqlite db
-        cur = db.cursor # create db cursor
+        cur = db.cursor() # create db cursor
         
         
         
