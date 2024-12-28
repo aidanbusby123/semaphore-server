@@ -29,13 +29,13 @@ def init_db():
     db = sqlite3.connect("messages.db")
     cur = db.cursor()
     cur.execute("""
-    CREATE TABLE IF NOT EXISTS `messages` (
-	`dest_addr` CHAR(32),
-	`origin_addr` CHAR(32),
-	`timestamp` INT(20),
-	`sz` INT(20),
-	`content` LONGBLOB(32),
-);
+        CREATE TABLE IF NOT EXISTS `messages` (
+	        `dest_addr` CHAR(32),
+	        `origin_addr` CHAR(32),
+	        `timestamp` INT(20),
+	        `sz` INT(20),
+	        `content` LONGBLOB(32)
+        );
     """)
     db.commit()
     db.close()
